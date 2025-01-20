@@ -166,7 +166,7 @@ The matrix $(C)$ maps the state vector to the measurement space. It includes:
 3. **State Estimation**:
 
    * The error vector $e_y$ is multiplied by the **Kalman Gain** ($K_k$) to compute how much influence the measurement error will have on correcting the state estimate.
-   * This correction is then added to the previous state estimate $\hat{x}_{k|k-1}$ to update the state estimate to a new value $\hat{x}_{k|k}$.
+   * This correction is then added to the previous state estimate $`\hat{x}_{k|k-1}`$ to update the state estimate to a new value $\hat{x}_{k|k}$.
 
 ---
 
