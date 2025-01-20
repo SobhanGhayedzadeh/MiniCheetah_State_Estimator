@@ -7,20 +7,33 @@ This repository contains Python code for implementing an offline Kalman filter-b
 The Linear Kalman filter operates in two main steps:
 
 ### 1. Predict Step
-$$
-\hat{x}_{k|k-1} = A \hat{x}_{k-1|k-1} + B a_k
-$$
-$$
+```math
+ \hat{x}_{k|k-1} = A \hat{x}_{k-1|k-1} + B a_k
+```
+```math
 P_{k|k-1} = A P_{k-1|k-1} A^T + Q
-$$
+```
 
 ### 2. Update Step
 
 
-- Observation: $$yModel_k = C \hat{x}_{k|k-1}$$
-- Kalman Gain: $$K_k = P_{k|k-1} C^T (C P_{k|k-1} C^T + R)^{-1}$$
-- State Update: $$\hat{x}_{k|k} = \hat{x}_{k|k-1} + K_k (y_k - yModel_k)$$
-- Covariance Update: $$P_{k|k} = (I - K_k C) P_{k|k-1}$$
+- Observation:
+```math
+yModel_k = C \hat{x}_{k|k-1}
+```
+- Kalman Gain:
+```math
+K_k = P_{k|k-1} C^T (C P_{k|k-1} C^T + R)^{-1}
+```
+ 
+- State Update:
+```math
+\hat{x}_{k|k} = \hat{x}_{k|k-1} + K_k (y_k - yModel_k)
+```
+- Covariance Update:
+```math
+P_{k|k} = (I - K_k C) P_{k|k-1}
+```
 
 ---
 
@@ -31,10 +44,10 @@ The state vector contains the following components:
 1. **COM Position (3 values)**: $[x, y, z]$
 2. **COM Velocity (3 values)**: $[\dot{x}, \dot{y}, \dot{z}]$
 3. **Leg Positions (4 legs × 3 values each)**:
-   $$
-   \text{Leg } 0: [x_0, y_0, z_0], \text{ Leg } 1: [x_1, y_1, z_1], \ldots, \text{ Leg } 3: [x_3, y_3, z_3]
-   $$
-   Total size of $\hat{x}$: $18 \times 1$
+```math
+   \text{Leg} 0: [x_0, y_0, z_0], \text{ Leg } 1: [x_1, y_1, z_1], \ldots, \text{ Leg } 3: [x_3, y_3, z_3]
+```
+Total size of $\hat{x}$: $18 \times 1$
 
 
 ---
@@ -56,35 +69,39 @@ $$
 #### **Control Input ($a_k$)**
 The control input vector $a_k$ represents accelerations:
 1. **Control Input Matrix ($B$)**:
-   $$
-   B =
-   \begin{bmatrix}
-   0 \\
-   dt \cdot I_{3} \\
-   0
-   \end{bmatrix}
-   $$
 
-2. **Input Vector ($a_k$)**:
+$$
+B =
+\begin{bmatrix}
+0 \\
+dt \cdot I_{3} \\
+0
+\end{bmatrix}
+$$
+
+3. **Input Vector ($a_k$)**:
    Acceleration input: $[a_x, a_y, a_z]$
 ---
 
 #### **Measurement Vector ($y_k$)**
 The measurement vector contains:
 1. **Leg Positions (4 legs × 3 values each)**:
-   $$
-   \text{Leg } 0: [x_0, y_0, z_0], \text{ Leg } 1: [x_1, y_1, z_1], \ldots
-   $$
+   
+$$
+\text{Leg } 0: [x_0, y_0, z_0], \text{ Leg } 1: [x_1, y_1, z_1], \ldots
+$$
 
-2. **Leg Velocities (4 legs × 3 values each)**:
-   $$
-   \text{Leg } 0: [\dot{x}_0, \dot{y}_0, \dot{z}_0], \ldots
-   $$
+3. **Leg Velocities (4 legs × 3 values each)**:
 
-3. **Leg Heights (4 legs × 1 value each)**:
-   $$
-   \text{Leg } 0: z_0, \ldots
-   $$
+$$
+\text{Leg } 0: [\dot{x}_0, \dot{y}_0, \dot{z}_0], \ldots
+$$
+
+4. **Leg Heights (4 legs × 1 value each)**:
+
+$$
+\text{Leg } 0: z_0, \ldots
+$$
 
 Total size of $y_k$: $28 \times 1$
 
@@ -96,7 +113,7 @@ The matrix $(C)$ maps the state vector to the measurement space. It includes:
 - Direct mapping of leg positions from $\hat{x}$ to $y_k$.
 - Negative identity blocks for relative positions and velocities.
 
-$$
+```math
 \mathbf{C} =
 \begin{bmatrix}
 \mathbf{I}_3 & \mathbf{0}_3 & \mathbf{0}_3 & \mathbf{0}_3 & -\mathbf{I}_{12} \\
@@ -112,7 +129,8 @@ $$
 0 & 0 & 0 & 0 & 0 & \dots & 0 & 0 & 1 & 0 \\
 0 & 0 & 0 & 0 & 0 & \dots & 0 & 0 & 0 & 1
 \end{bmatrix}
-$$
+```
+
 ---
 
 #### **Noise Matrices**
